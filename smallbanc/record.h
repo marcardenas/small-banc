@@ -12,5 +12,3 @@ struct LedgerEntry
 {
 
 };
-
-class 
