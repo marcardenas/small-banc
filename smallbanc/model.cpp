@@ -1,6 +1,7 @@
 
 
-class Account {
+class Account
+{
 public:
   Account() = delete;
   Account(const Account &) = delete;

@@ -2,7 +2,8 @@
 
 #include <string>
 
-class Ledger {
+class Ledger
+{
 public:
   Ledger create(const std::string &filename);
   Ledger from_file(const std::string filename);
