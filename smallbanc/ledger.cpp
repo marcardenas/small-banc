@@ -1,24 +1,36 @@
+#include <smallbanc/io.h>
 #include <smallbanc/ledger.h>
+
+#include <iostream>
 
 namespace smallbanc
 {
+
 namespace ledger
-
 {
 
-Ledger Ledger::create( const std::string &filename )
+Ledger::Ledger( const std::string &file ) : m_file( file ) {}
+
+void Ledger::fetch() {}
+
+void Ledger::create( std::shared_ptr<smallbanc::io::IFileCreator> file_creator )
 {
-  Ledger ledger;
-  // Implementation for creating a new ledger file goes here
-  return ledger;
+  file_creator->set( m_file );
+
+  if ( !file_creator->exists() )
+  {
+    file_creator->create();
+    m_exists = true;
+  }
+  else
+  {
+    throw std::runtime_error( "Ledger file already exists" );
+  }
 }
 
-Ledger Ledger::from_file( const std::string filename )
-{
-  Ledger ledger;
-  // Implementation for loading a ledger from an existing file goes here
-  return ledger;
-}
+bool Ledger::exists() const { return m_exists; }
+
+void Ledger::store() {}
 
 } // namespace ledger
 
