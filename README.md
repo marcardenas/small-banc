@@ -1,2 +1,2 @@
 # small-banc
-COBOL based core banking system
+C++/Objective-C++ based core banking system
