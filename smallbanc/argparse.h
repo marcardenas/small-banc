@@ -5,6 +5,7 @@
 
 namespace smallbanc
 {
+
 namespace argparse
 {
 
@@ -22,9 +23,9 @@ struct Args
 class Parser
 {
 public:
-  Parser(std::reference_wrapper<Args> args);
+  Parser( std::reference_wrapper<Args> args );
   void parse();
-  void set_args(int argc, char **argv);
+  void set_args( int argc, char **argv );
 
 private:
   std::reference_wrapper<Args> args_;

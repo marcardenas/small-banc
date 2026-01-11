@@ -2,11 +2,16 @@
 
 #include <string>
 
+namespace smallbanc
+{
+namespace ledger
+{
+
 class Ledger
 {
 public:
-  Ledger create(const std::string &filename);
-  Ledger from_file(const std::string filename);
+  static Ledger create(const std::string &filename);
+  static Ledger from_file(const std::string filename);
 
   /**
    * @brief Save current ledager state to loaded file
@@ -15,9 +20,12 @@ public:
   void store();
 
 private:
-  Ledger() = delete;
+  Ledger() = default;
   Ledger(const Ledger &) = delete;
   Ledger &operator=(const Ledger &) = delete;
-  Ledger(Ledger &&) = delete;
+  Ledger(Ledger &&) = default;
   Ledger &operator=(Ledger &&) = delete;
 };
+
+} // namespace ledger
+} // namespace smallbanc

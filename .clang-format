@@ -1,1 +1,8 @@
 BreakBeforeBraces: Allman
+Language: Cpp
+SpacesInParens: Custom
+SpacesInParensOptions:
+  InCStyleCasts: true
+  InConditionalStatements: true
+  InEmptyParentheses: false
+  Other: true
