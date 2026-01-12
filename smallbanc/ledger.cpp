@@ -1,7 +1,10 @@
-#include <smallbanc/io.h>
-#include <smallbanc/ledger.h>
+#include <smallbanc/io.hpp>
+#include <smallbanc/ledger.hpp>
 
+#include <chrono>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 
 namespace smallbanc
 {
@@ -9,28 +12,87 @@ namespace smallbanc
 namespace ledger
 {
 
-Ledger::Ledger( const std::string &file ) : m_file( file ) {}
+void Ledger::add_entry( const Entry &entry ) { m_entries.push_back( entry ); }
 
-void Ledger::fetch() {}
+const std::vector<Entry> &Ledger::entries() const { return m_entries; }
 
-void Ledger::create( std::shared_ptr<smallbanc::io::IFileCreator> file_creator )
+double Ledger::balance( unsigned int account_number ) const
 {
-  file_creator->set( m_file );
-
-  if ( !file_creator->exists() )
+  double bal = 0.0;
+  for ( const auto &entry : m_entries )
   {
-    file_creator->create();
-    m_exists = true;
+    if ( entry.get_origin().account_number == account_number )
+    {
+      bal -= entry.get_amount();  // Débito reduce balance
+    }
+    if ( entry.get_destination().account_number == account_number )
+    {
+      bal += entry.get_amount();  // Crédito aumenta balance
+    }
   }
-  else
-  {
-    throw std::runtime_error( "Ledger file already exists" );
-  }
+  return bal;
 }
 
-bool Ledger::exists() const { return m_exists; }
+std::size_t Ledger::size() const { return m_entries.size(); }
 
-void Ledger::store() {}
+LedgerReader::LedgerReader(
+  std::shared_ptr<smallbanc::io::IFileReader> reader )
+    : m_reader( reader )
+{
+}
+
+std::vector<Entry> LedgerReader::read() const
+{
+  std::vector<Entry> entries;
+  std::string content = m_reader->read();
+
+  std::istringstream stream( content );
+  std::string line;
+  while ( std::getline( stream, line ) )
+  {
+    if ( line.empty() || line[0] == '#' )
+      continue;
+
+    std::istringstream line_stream( line );
+    std::string token;
+
+    // Fecha
+    std::getline( line_stream, token, ',' );
+    std::tm tm = {};
+    std::istringstream ss( token );
+    ss >> std::get_time( &tm, "%Y-%m-%d %H:%M:%S" );
+    auto timestamp = std::chrono::system_clock::from_time_t( std::mktime( &tm ) );
+
+    // Tipo
+    std::getline( line_stream, token, ',' );
+    TransactionType type =
+      ( token == "DEBIT" ) ? TransactionType::Debit : TransactionType::Credit;
+
+    // Cuentas origen
+    Account origin;
+    std::getline( line_stream, token, ',' );
+    origin.account_number = std::stoi( token );
+
+    // Cuentas destino
+    Account destination;
+    std::getline( line_stream, token, ',' );
+    destination.account_number = std::stoi( token );
+
+    // Monto
+    std::getline( line_stream, token, ',' );
+    double amount = std::stod( token );
+
+    // Descripción
+    std::getline( line_stream, token, ',' );
+    std::string description = token;
+
+    // Crear Entry con constructor
+    Entry entry( type, origin, destination, amount, description, timestamp );
+    entries.push_back( entry );
+  }
+
+  return entries;
+}
 
 } // namespace ledger
 

@@ -14,6 +14,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(gtest)
 
 enable_testing()
+include(GoogleTest)
 
 add_subdirectory(bin)
 add_subdirectory(smallbanc)

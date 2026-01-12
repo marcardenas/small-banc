@@ -1,6 +1,9 @@
 BreakBeforeBraces: Allman
 Language: Cpp
+ColumnLimit: 80
 SpacesInParens: Custom
+AlignAfterOpenBracket: DontAlign
+ContinuationIndentWidth: 2
 SpacesInParensOptions:
   InCStyleCasts: true
   InConditionalStatements: true

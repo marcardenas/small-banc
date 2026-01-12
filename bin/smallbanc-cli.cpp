@@ -1,4 +1,4 @@
-#include <smallbanc/argparse.h>
+#include <smallbanc/argparse.hpp>
 
 #include <iostream>
 

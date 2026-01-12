@@ -1,5 +1,5 @@
 #include <functional>
-#include <smallbanc/argparse.h>
+#include <smallbanc/argparse.hpp>
 #include <string>
 
 namespace smallbanc::argparse

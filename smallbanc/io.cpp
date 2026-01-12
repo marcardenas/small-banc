@@ -1,4 +1,4 @@
-#include <smallbanc/io.h>
+#include <smallbanc/io.hpp>
 
 #include <filesystem>
 #include <fstream>
@@ -9,29 +9,12 @@ namespace smallbanc
 namespace io
 {
 
-void FileCreator::create()
+FileReader::FileReader( const std::string &file ) : IFileReader()
 {
-  std::ofstream file( m_file );
-
-  if ( file.is_open() )
-  {
-    file.close();
-  }
-  else
-  {
-    throw std::runtime_error( "Could not create file: " + m_file );
-  }
+  m_file = file;
 }
 
-bool FileCreator::exists() const
-{
-  if ( !std::filesystem::exists( m_file ) )
-  {
-    return false;
-  }
-
-  return true;
-}
+std::string FileReader::read() const {}
 
 } // namespace io
 
