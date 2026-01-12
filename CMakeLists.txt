@@ -16,6 +16,6 @@ FetchContent_MakeAvailable(gtest)
 enable_testing()
 include(GoogleTest)
 
-add_subdirectory(bin)
+add_subdirectory(cli)
 add_subdirectory(smallbanc)
 add_subdirectory(tests)
