@@ -28,12 +28,37 @@ private:
   std::string m_file;
 };
 
+class LedgerWriter
+{
+public:
+  LedgerWriter( std::shared_ptr<smallbanc::io::IFileWriter> writer )
+      : m_writer( writer )
+  {
+  }
+  static LedgerWriter create( const std::string &file )
+  {
+    auto writer = std::make_shared<smallbanc::io::FileWriter>( file );
+    return LedgerWriter( writer );
+  }
+
+  void initialize() const { m_writer->initialize(); }
+
+  void write( const Ledger &ledger ) const;
+
+private:
+  std::shared_ptr<smallbanc::io::IFileWriter> m_writer;
+};
+
 class LedgerReader
 {
 public:
   LedgerReader( std::shared_ptr<smallbanc::io::IFileReader> reader );
 
-  std::vector<Entry> read() const;
+  static LedgerReader create( const std::string &file );
+
+  Ledger read() const;
+
+  bool exists() const;
 
 private:
   std::shared_ptr<smallbanc::io::IFileReader> m_reader;

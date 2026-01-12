@@ -34,7 +34,7 @@ public:
   {
   }
   std::string read() const override { return m_content; }
-
+  std::string filename() const override { return "mocked_file"; }
 private:
   std::string m_content;
 };
@@ -152,7 +152,7 @@ TEST( LedgerReaderTest, ReadEmptyFile )
   auto reader = std::make_shared<FileReaderMock>( "" );
   smallbanc::ledger::LedgerReader lr( reader );
 
-  auto entries = lr.read();
+  auto entries = lr.read().entries();
 
   ASSERT_TRUE( entries.empty() );
 }
@@ -251,7 +251,7 @@ TEST( LedgerIntegrationTest, ReadAndAddToLedger )
   auto reader = std::make_shared<FileReaderMock>( csv );
   smallbanc::ledger::LedgerReader lr( reader );
 
-  auto entries = lr.read();
+  auto entries = lr.read().entries();
 
   smallbanc::ledger::Ledger ledger;
   for ( const auto &entry : entries )
