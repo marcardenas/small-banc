@@ -1,5 +1,5 @@
 set(SOURCES smallbanc-cli.cpp)
-set(OBJC_SOURCES smallbanc-objc-cli.mm)
+set(OBJC_SOURCES smallbanc-objc-cli.mm smallbanc-objc-impl.mm)
 
 add_executable(smallbanc-cli ${SOURCES})
 add_executable(smallbanc-cli-mac ${OBJC_SOURCES})

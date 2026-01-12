@@ -1,6 +1,7 @@
 #include <functional>
 #include <smallbanc/argparse.hpp>
 #include <string>
+#include <iostream>
 
 namespace smallbanc::argparse
 {
