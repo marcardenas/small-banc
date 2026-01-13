@@ -1,41 +1,29 @@
 #include <smallbanc/argparse.hpp>
+#include <smallbanc/actions.hpp>
 #include <smallbanc/ledger.hpp>
 
 #include <iostream>
 
-void print_help()
-{
-  std::cout << "Usage: smallbanc-cli [command] [options]\n"
-            << "Commands:\n"
-            << "  add-entry             Add a new entry to the ledger\n"
-            << "  get-balance           Get balance for an account\n"
-            << "  list-entries          List all entries\n"
-            << "Options:\n"
-            << "  --help                Show this help message\n"
-            << "  --config <file>       Specify configuration file\n"
-            << "  --ledger <location>   Specify ledger location\n"
-            << "  --account-from <id>   Source account for add-entry\n"
-            << "  --account-to <id>     Destination account for add-entry\n"
-            << "  --amount <value>      Amount for add-entry\n"
-            << "  --description <text>  Description for add-entry\n"
-            << "  --type <debit|credit> Type for add-entry\n"
-            << "  --account <id>        Account for get-balance\n";
-}
+using namespace smallbanc::model;
 
 int main( int argc, char *argv[] )
 {
   smallbanc::argparse::Args args;
 
-  {
-    smallbanc::argparse::Parser parser( std::ref( args ) );
+  smallbanc::argparse::Parser parser( std::ref( args ) );
 
-    parser.set_args( argc, argv );
-    parser.parse();
+  parser.set_args( argc, argv );
+  parser.parse();
+
+  if ( !args.help_command.empty() )
+  {
+    parser.print_help( args.help_command );
+    return 0;
   }
 
-  if ( args.help || args.command.empty() )
+  if ( args.command.empty() )
   {
-    print_help();
+    parser.print_help();
     return 0;
   }
 
@@ -101,10 +89,21 @@ int main( int argc, char *argv[] )
                 << ", Description: " << entry.get_description() << "\n";
     }
   }
+  else if ( args.command == "add-client" )
+  {
+    if ( args.client_name.empty() || args.account_number == 0 )
+    {
+      std::cerr << "Error: Missing parameters for add-client\n";
+      return 1;
+    }
+
+    // TODO: Implement add client logic
+    std::cout << "Client " << args.client_name << " added with account " << args.account_number << "\n";
+  }
   else
   {
     std::cerr << "Unknown command: " << args.command << "\n";
-    print_help();
+    parser.print_help();
     return 1;
   }
 

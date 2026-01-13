@@ -12,9 +12,9 @@ namespace smallbanc
 namespace ledger
 {
 
-void Ledger::add_entry( const Entry &entry ) { m_entries.push_back( entry ); }
+void Ledger::add_entry( const model::Entry &entry ) { m_entries.push_back( entry ); }
 
-const std::vector<Entry> &Ledger::entries() const { return m_entries; }
+const std::vector<model::Entry> &Ledger::entries() const { return m_entries; }
 
 double Ledger::balance( unsigned int account_number ) const
 {
@@ -73,16 +73,16 @@ Ledger LedgerReader::read() const
 
     // Tipo
     std::getline( line_stream, token, ',' );
-    TransactionType type =
-      ( token == "DEBIT" ) ? TransactionType::Debit : TransactionType::Credit;
+    model::TransactionType type =
+      ( token == "DEBIT" ) ? model::TransactionType::Debit : model::TransactionType::Credit;
 
     // Cuentas origen
-    Account origin;
+    model::Account origin;
     std::getline( line_stream, token, ',' );
     origin.account_number = std::stoi( token );
 
     // Cuentas destino
-    Account destination;
+    model::Account destination;
     std::getline( line_stream, token, ',' );
     destination.account_number = std::stoi( token );
 
@@ -96,7 +96,7 @@ Ledger LedgerReader::read() const
 
     // Crear Entry con constructor
     ledger.add_entry(
-      Entry( type, origin, destination, amount, description, timestamp ) );
+      model::Entry( type, origin, destination, amount, description, timestamp ) );
   }
 
   return ledger;
@@ -120,7 +120,7 @@ void LedgerWriter::write( const Ledger &ledger ) const
     std::strftime( buffer, sizeof( buffer ), "%Y-%m-%d %H:%M:%S", &tm );
 
     content += std::string( buffer ) + ",";
-    content += entry.get_type() == TransactionType::Debit ? "DEBIT," : "CREDIT,";
+    content += entry.get_type() == model::TransactionType::Debit ? "DEBIT," : "CREDIT,";
     content += std::to_string( entry.get_origin().account_number ) + ",";
     content += std::to_string( entry.get_destination().account_number ) + ",";
     content += std::to_string( entry.get_amount() ) + ",";

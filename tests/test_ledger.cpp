@@ -3,6 +3,8 @@
 #include <smallbanc/io.hpp>
 #include <smallbanc/ledger.hpp>
 
+using namespace smallbanc::model;
+
 // Helper para crear cuentas de prueba
 Account create_test_account( unsigned int account_number )
 {

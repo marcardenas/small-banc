@@ -8,7 +8,7 @@ namespace smallbanc::argparse
 
 @interface ArgsObjc : NSObject
 
-- (BOOL) help;
+- (NSString*) helpCommand;
 
 - (instancetype)init;
 - (void *)instance;

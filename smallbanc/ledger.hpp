@@ -28,14 +28,14 @@ class Ledger
 public:
   Ledger() = default;
 
-  void add_entry( const Entry &entry );
-  const std::vector<Entry> &entries() const;
+  void add_entry( const model::Entry &entry );
+  const std::vector<model::Entry> &entries() const;
 
   double balance( unsigned int account_number ) const;
   std::size_t size() const;
 
 private:
-  std::vector<Entry> m_entries;
+  std::vector<model::Entry> m_entries;
   std::string m_file;
 };
 

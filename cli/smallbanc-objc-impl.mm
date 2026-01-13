@@ -37,9 +37,10 @@
     return _cppInstance;
 }
 
-- (BOOL) help 
+- (NSString*) helpCommand 
 {
-    return static_cast<smallbanc::argparse::Args*>( _cppInstance )->help ? YES : NO;
+    const std::string& str = static_cast<smallbanc::argparse::Args*>( _cppInstance )->help_command;
+    return [NSString stringWithUTF8String: str.c_str()];
 }
 @end
 
