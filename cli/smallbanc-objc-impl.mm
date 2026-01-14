@@ -27,7 +27,7 @@
     return self;
 }
 
-- (void)dealloc
+- (void) dealloc
 {
     delete static_cast<smallbanc::argparse::Args*>( _cppInstance );
     [super dealloc];
@@ -40,6 +40,11 @@
 - (NSString*) helpCommand 
 {
     const std::string& str = static_cast<smallbanc::argparse::Args*>( _cppInstance )->help_command;
+    return [NSString stringWithUTF8String: str.c_str()];
+}
+- (NSString*) command
+{
+    const std::string& str = static_cast<smallbanc::argparse::Args*>( _cppInstance )->command;
     return [NSString stringWithUTF8String: str.c_str()];
 }
 @end

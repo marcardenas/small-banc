@@ -18,6 +18,11 @@ int main(
         [parser print_help:args.helpCommand];
     }
 
+    if( [args.command length] == 0 )
+    {
+        [parser print_help:@""];
+    }
+
     [args dealloc];
 
     return 0;
