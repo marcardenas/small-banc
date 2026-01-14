@@ -30,25 +30,36 @@ enum class TransactionType
 
 struct Client
 {
-  unsigned int id;
+  unsigned int id = -1;
   std::string name;
   std::string email;
-  bool is_active;
+  bool is_active = false;
+
+  bool validate()
+  {
+    // At least name and id must be set
+    if ( ( id == -1 ) | name.empty() )
+    {
+      return false;
+    }
+
+    return true;
+  }
 };
 
 // ----------------------------------------------------------------------------
 
 struct Transaction
 {
-  unsigned int source_id;
-  unsigned int destination_id;
+  unsigned int source_id = -1;
+  unsigned int destination_id = -1;
   double amount;
   std::chrono::system_clock::time_point timestamp;
 };
 
 struct Account
 {
-  unsigned int account_number;
+  unsigned int account_number = -1;
   std::string account_type;
   double balance;
   Client owner;
@@ -67,33 +78,25 @@ public:
 
 // ----------------------------------------------------------------------------
 
-class Entry
+struct Entry
 {
-public:
-  Entry( TransactionType type, const Account &origin,
-    const Account &destination, double amount, const std::string &description,
-    const std::chrono::system_clock::time_point &timestamp )
-      : type( type ), origin( origin ), destination( destination ),
-        amount( amount ), description( description ), m_timestamp( timestamp )
+
+  void checkin() { m_timestamp = std::chrono::system_clock::now(); }
+
+  bool validate()
   {
+    if ( origin == 0 || destination == 0 || amount == 0.0 ||
+         type == TransactionType::Unknown )
+    {
+      return false;
+    }
+
+    return true;
   }
 
-  TransactionType get_type() const { return type; }
-  const Account &get_origin() const { return origin; }
-  const Account &get_destination() const { return destination; }
-  double get_amount() const { return amount; }
-  const std::string &get_description() const { return description; }
-  std::chrono::system_clock::time_point get_timestamp() const
-  {
-    return m_timestamp;
-  }
-
-  void set_timestamp() { m_timestamp = std::chrono::system_clock::now(); }
-
-private:
-  TransactionType type;
-  Account origin;
-  Account destination;
+  TransactionType type = TransactionType::Unknown;
+  unsigned int origin = -1;
+  unsigned int destination = -1;
   double amount;
   std::string description;
   std::chrono::system_clock::time_point m_timestamp;

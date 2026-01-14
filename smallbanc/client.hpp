@@ -51,11 +51,17 @@ private:
 class ClientWriter : public smallbanc::model::IModelWriter
 {
 public:
-  ClientWriter( const std::string &file ) : m_file( file )
+  ClientWriter( std::shared_ptr<smallbanc::io::IFileWriter> writer )
+      : m_writer( writer )
   {
-    m_writer = std::make_unique<smallbanc::io::FileWriter>( file );
   }
   ~ClientWriter();
+
+  static std::shared_ptr<ClientWriter> create( const std::string &file )
+  {
+    auto writer = std::make_shared<smallbanc::io::FileWriter>( file );
+    return std::make_shared<ClientWriter>( writer );
+  }
 
   void insert( const smallbanc::model::Client &client );
   void remove( unsigned int client_id );
@@ -69,7 +75,7 @@ private:
 
   std::string m_file;
 
-  std::unique_ptr<smallbanc::io::IFileWriter> m_writer;
+  std::shared_ptr<smallbanc::io::IFileWriter> m_writer;
   std::vector<smallbanc::model::Client> m_dispatch_list;
 };
 

@@ -7,6 +7,7 @@
 #include "smallbanc/io.hpp"
 #include "smallbanc/model.hpp"
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <vector>
@@ -28,7 +29,7 @@ class Ledger
 public:
   Ledger() = default;
 
-  void add_entry( const model::Entry &entry );
+  void insert( const model::Entry &entry );
   const std::vector<model::Entry> &entries() const;
 
   double balance( unsigned int account_number ) const;
@@ -48,18 +49,33 @@ public:
       : m_writer( writer )
   {
   }
-  static LedgerWriter create( const std::string &file )
+  static std::shared_ptr<LedgerWriter> create( const std::string &file )
   {
     auto writer = std::make_shared<smallbanc::io::FileWriter>( file );
-    return LedgerWriter( writer );
+    return std::make_shared<LedgerWriter>( writer );
   }
 
   void initialize() const { m_writer->initialize(); }
 
   void write( const Ledger& ) const;
 
+  bool exists()
+  {
+    return std::filesystem::exists( m_writer->filename() );
+  }
+
+  void insert( smallbanc::model::Entry &entry )
+  {
+    m_dispatch_list.push_back( entry );
+  }
+
+  void write() const;
+
 private:
+  std::string build_ledger_record( const smallbanc::model::Entry& entry ) const;
+
   std::shared_ptr<smallbanc::io::IFileWriter> m_writer;
+  std::vector<smallbanc::model::Entry> m_dispatch_list;
 };
 
 // ----------------------------------------------------------------------------

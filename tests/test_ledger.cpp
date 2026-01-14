@@ -23,9 +23,8 @@ Account create_test_account( unsigned int account_number )
 Entry create_test_entry( TransactionType type, unsigned int origin_num,
   unsigned int dest_num, double amount, const std::string &description )
 {
-  return Entry( type, create_test_account( origin_num ),
-    create_test_account( dest_num ), amount, description,
-    std::chrono::system_clock::now() );
+  return Entry{ type, origin_num, dest_num, amount, description,
+    std::chrono::system_clock::now() };
 }
 
 class FileReaderMock : public smallbanc::io::IFileReader
@@ -54,7 +53,7 @@ TEST( LedgerTest, AddEntry )
   Entry entry =
     create_test_entry( TransactionType::Debit, 1, 2, 100.0, "Test Payment" );
 
-  ledger.add_entry( entry );
+  ledger.insert( entry );
 
   ASSERT_EQ( ledger.size(), 1 );
   ASSERT_EQ( ledger.entries().size(), 1 );
@@ -68,13 +67,13 @@ TEST( LedgerTest, Size )
 
   Entry entry =
     create_test_entry( TransactionType::Debit, 1, 2, 100.0, "Test1" );
-  ledger.add_entry( entry );
+  ledger.insert( entry );
 
   ASSERT_EQ( ledger.size(), 1 );
 
   Entry entry2 =
     create_test_entry( TransactionType::Credit, 2, 1, 50.0, "Test2" );
-  ledger.add_entry( entry2 );
+  ledger.insert( entry2 );
 
   ASSERT_EQ( ledger.size(), 2 );
 }
@@ -86,12 +85,12 @@ TEST( LedgerTest, BalanceCalculation )
   // Agregar débito: cuenta 1 pierde 50
   Entry debit =
     create_test_entry( TransactionType::Debit, 1, 2, 50.0, "Debit" );
-  ledger.add_entry( debit );
+  ledger.insert( debit );
 
   // Agregar crédito: cuenta 1 recibe 30
   Entry credit =
     create_test_entry( TransactionType::Credit, 2, 1, 30.0, "Credit" );
-  ledger.add_entry( credit );
+  ledger.insert( credit );
 
   // Balance para cuenta 1: -50 + 30 = -20
   ASSERT_DOUBLE_EQ( ledger.balance( 1 ), -20.0 );
@@ -112,9 +111,9 @@ TEST( LedgerTest, BalanceMultipleTransactions )
   Entry e2 = create_test_entry( TransactionType::Credit, 2, 1, 50.0, "In1" );
   Entry e3 = create_test_entry( TransactionType::Debit, 1, 3, 25.0, "Out2" );
 
-  ledger.add_entry( e1 );
-  ledger.add_entry( e2 );
-  ledger.add_entry( e3 );
+  ledger.insert( e1 );
+  ledger.insert( e2 );
+  ledger.insert( e3 );
 
   ASSERT_DOUBLE_EQ( ledger.balance( 1 ), -75.0 );
   ASSERT_DOUBLE_EQ( ledger.balance( 2 ), 50.0 );
@@ -128,7 +127,7 @@ TEST( LedgerTest, BalanceWithSameAccountOriginDestination )
   // Transacción interna (débito y crédito en misma cuenta se anulan)
   Entry internal =
     create_test_entry( TransactionType::Debit, 1, 1, 50.0, "Internal" );
-  ledger.add_entry( internal );
+  ledger.insert( internal );
 
   ASSERT_DOUBLE_EQ( ledger.balance( 1 ), 0.0 );
 }
@@ -141,7 +140,7 @@ TEST( LedgerTest, AddMultipleEntriesAndVerifySize )
   {
     Entry entry = create_test_entry( TransactionType::Debit, i, i + 1, 10.0 * i,
       "Entry " + std::to_string( i ) );
-    ledger.add_entry( entry );
+    ledger.insert( entry );
   }
 
   ASSERT_EQ( ledger.size(), 10 );
@@ -258,7 +257,7 @@ TEST( LedgerIntegrationTest, ReadAndAddToLedger )
   smallbanc::ledger::Ledger ledger;
   for ( const auto &entry : entries )
   {
-    ledger.add_entry( entry );
+    ledger.insert( entry );
   }
 
   ASSERT_EQ( ledger.size(), 2 );
@@ -269,7 +268,7 @@ TEST( LedgerTest, EntriesVectorImmutable )
   smallbanc::ledger::Ledger ledger;
   Entry entry =
     create_test_entry( TransactionType::Debit, 1, 2, 100.0, "Test" );
-  ledger.add_entry( entry );
+  ledger.insert( entry );
 
   const auto &entries = ledger.entries();
   ASSERT_EQ( entries.size(), 1 );

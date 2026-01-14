@@ -12,7 +12,10 @@ namespace smallbanc
 namespace ledger
 {
 
-void Ledger::add_entry( const model::Entry &entry ) { m_entries.push_back( entry ); }
+void Ledger::insert( const model::Entry &entry )
+{
+  m_entries.push_back( entry );
+}
 
 const std::vector<model::Entry> &Ledger::entries() const { return m_entries; }
 
@@ -21,13 +24,13 @@ double Ledger::balance( unsigned int account_number ) const
   double bal = 0.0;
   for ( const auto &entry : m_entries )
   {
-    if ( entry.get_origin().account_number == account_number )
+    if ( entry.origin == account_number )
     {
-      bal -= entry.get_amount(); // Débito reduce balance
+      bal -= entry.amount; // Débito reduce balance
     }
-    if ( entry.get_destination().account_number == account_number )
+    if ( entry.destination == account_number )
     {
-      bal += entry.get_amount(); // Crédito aumenta balance
+      bal += entry.amount; // Crédito aumenta balance
     }
   }
   return bal;
@@ -73,18 +76,19 @@ Ledger LedgerReader::read() const
 
     // Tipo
     std::getline( line_stream, token, ',' );
-    model::TransactionType type =
-      ( token == "DEBIT" ) ? model::TransactionType::Debit : model::TransactionType::Credit;
+    model::TransactionType type = ( token == "DEBIT" )
+                                    ? model::TransactionType::Debit
+                                    : model::TransactionType::Credit;
 
     // Cuentas origen
-    model::Account origin;
+    unsigned int origin_account;
     std::getline( line_stream, token, ',' );
-    origin.account_number = std::stoi( token );
+    origin_account = std::stoi( token );
 
     // Cuentas destino
-    model::Account destination;
+    unsigned int destination_account;
     std::getline( line_stream, token, ',' );
-    destination.account_number = std::stoi( token );
+    destination_account = std::stoi( token );
 
     // Monto
     std::getline( line_stream, token, ',' );
@@ -94,9 +98,16 @@ Ledger LedgerReader::read() const
     std::getline( line_stream, token, ',' );
     std::string description = token;
 
-    // Crear Entry con constructor
-    ledger.add_entry(
-      model::Entry( type, origin, destination, amount, description, timestamp ) );
+    // Crear Entry
+    model::Entry entry;
+    entry.type = type;
+    entry.origin = origin_account;
+    entry.destination = destination_account;
+    entry.amount = amount;
+    entry.description = description;
+    entry.m_timestamp = timestamp;
+
+    ledger.insert( entry );
   }
 
   return ledger;
@@ -107,26 +118,32 @@ bool LedgerReader::exists() const
   return std::filesystem::exists( m_reader->filename() );
 }
 
-void LedgerWriter::write( const Ledger& ledger ) const
+void LedgerWriter::write() const
+{
+  for ( const auto &client : m_dispatch_list )
+  {
+    auto record = build_ledger_record( client );
+    m_writer->write( record );
+  }
+}
+
+std::string LedgerWriter::build_ledger_record(
+  const smallbanc::model::Entry &entry ) const
 {
   std::string content;
-  const auto &entries = ledger.entries();
-  for ( const auto &entry : entries )
-  {
-    // Formato CSV: timestamp,type,origin,destination,amount,description
-    auto time_t = std::chrono::system_clock::to_time_t( entry.get_timestamp() );
-    std::tm tm = *std::localtime( &time_t );
-    char buffer[20];
-    std::strftime( buffer, sizeof( buffer ), "%Y-%m-%d %H:%M:%S", &tm );
+  auto time_t = std::chrono::system_clock::to_time_t( entry.m_timestamp );
+  std::tm tm = *std::localtime( &time_t );
+  char buffer[20];
+  std::strftime( buffer, sizeof( buffer ), "%Y-%m-%d %H:%M:%S", &tm );
 
-    content += std::string( buffer ) + ",";
-    content += entry.get_type() == model::TransactionType::Debit ? "DEBIT," : "CREDIT,";
-    content += std::to_string( entry.get_origin().account_number ) + ",";
-    content += std::to_string( entry.get_destination().account_number ) + ",";
-    content += std::to_string( entry.get_amount() ) + ",";
-    content += entry.get_description() + "\n";
-  }
-  m_writer->write( content );
+  content += std::string( buffer ) + ",";
+  content += entry.type == model::TransactionType::Debit ? "DEBIT," : "CREDIT,";
+  content += std::to_string( entry.origin ) + ",";
+  content += std::to_string( entry.destination ) + ",";
+  content += std::to_string( entry.amount ) + ",";
+  content += entry.description + "\n";
+
+  return content;
 }
 
 } // namespace ledger
