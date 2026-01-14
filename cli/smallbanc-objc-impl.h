@@ -1,4 +1,5 @@
 #import <Foundation/Foundation.h>
+#import <smallbanc/actions.hpp>
 
 namespace smallbanc::argparse
 {
@@ -7,9 +8,7 @@ namespace smallbanc::argparse
 }
 
 @interface ArgsObjc : NSObject
-
 - (NSString*) helpCommand;
-
 - (instancetype)init;
 - (void *)instance;
 @end
@@ -17,5 +16,14 @@ namespace smallbanc::argparse
 @interface ParserObjc : NSObject
 - (void)set_args:(int)argc argv:(char**)argv;
 - (void)parse;
+- (void)print_help:(NSString*)command;
 - (instancetype)initWithArgs:(ArgsObjc*)args;
+@end
+
+@interface IActionsObjc : NSObject
+
+@end
+
+@interface AddClientActionObjc : IActionsObjc
+
 @end

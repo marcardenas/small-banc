@@ -75,4 +75,9 @@
     smallbanc::argparse::Parser* cppParser = static_cast<smallbanc::argparse::Parser*>( _cppInstance );
     cppParser->parse();
 }
+- (void) print_help:(NSString*)command
+{
+    auto cppParser = static_cast<smallbanc::argparse::Parser*>( _cppInstance );
+    cppParser->print_help( std::string( [ command UTF8String] ) );
+}
 @end

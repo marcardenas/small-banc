@@ -13,13 +13,9 @@ int main(
     [parser set_args:argc argv:argv];
     [parser parse];
 
-    if( [[args helpCommand] length] > 0 )
+    if( [args.helpCommand length] != 0 )
     {
-        printf("Help requested for: %s\n", [[args helpCommand] UTF8String]);
-    }
-    else
-    {
-        printf("No help requested\n");
+        [parser print_help:args.helpCommand];
     }
 
     [args dealloc];
