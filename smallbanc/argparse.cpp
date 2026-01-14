@@ -67,6 +67,10 @@ void Parser::parse()
     {
       args_.get().account_number = std::stoul( argv_[++i] );
     }
+    else if ( argument == "--email" && i + 1 < argc_ )
+    {
+      args_.get().email = std::string( argv_[++i]);
+    }
     else if ( argument[0] != '-' && args_.get().command.empty() )
     {
       // First non flag is the command
@@ -89,7 +93,15 @@ void Parser::set_args( int argc, char **argv )
 
 void Parser::print_help( const std::string &command )
 {
-  if ( command == "add-entry" )
+  if ( command == "add-client" )
+  {
+    std::cout << "Usage: add-client [options]\n"
+              << "Options:\n"
+              << "  --client-name <str>     Client name\n"
+              << "  --account-number <num>  Account number\n"
+              << "  --email <str>           Client email \n";
+  }
+  else if ( command == "add-entry" )
   {
     std::cout << "Usage: add-entry [options]\n"
               << "Options:\n"

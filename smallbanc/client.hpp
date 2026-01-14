@@ -61,9 +61,7 @@ public:
   void remove( unsigned int client_id );
   void initialize() const;
   void write() const;
-  bool exists() const {
-    return std::filesystem::exists( m_file );
-  }
+  bool exists() const { return std::filesystem::exists( m_file ); }
 
 private:
   std::string build_client_record(

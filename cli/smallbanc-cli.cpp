@@ -50,7 +50,7 @@ int main( int argc, char *argv[] )
     }
 
     auto client = smallbanc::model::Client{
-      args.account_number, args.client_name, "", true };
+      args.account_number, args.client_name, args.email, true };
     auto writer = std::make_shared<smallbanc::client::ClientWriter>( "clients.sb" );
 
     action = std::make_unique<AddClientAction>( client, writer );

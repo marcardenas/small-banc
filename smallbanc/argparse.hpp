@@ -29,9 +29,9 @@ struct Args
   // Parameters for get-balance
   unsigned int account_number = 0;
 
-  // Parameters for add-client
   std::string client_name;
-
+  std::string email;
+  
   // Constructor to initialize default values if needed
   Args() = default;
 };
