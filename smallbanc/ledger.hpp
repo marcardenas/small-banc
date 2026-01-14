@@ -56,7 +56,7 @@ public:
 
   void initialize() const { m_writer->initialize(); }
 
-  void write( const Ledger &ledger ) const;
+  void write( const Ledger& ) const;
 
 private:
   std::shared_ptr<smallbanc::io::IFileWriter> m_writer;

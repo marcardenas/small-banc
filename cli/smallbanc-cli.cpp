@@ -1,6 +1,8 @@
-#include <smallbanc/argparse.hpp>
+#include "smallbanc/client.hpp"
 #include <smallbanc/actions.hpp>
+#include <smallbanc/argparse.hpp>
 #include <smallbanc/ledger.hpp>
+#include <smallbanc/model.hpp>
 
 #include <iostream>
 
@@ -36,9 +38,25 @@ int main( int argc, char *argv[] )
   }
 
   auto ledger = lr.read();
+  std::unique_ptr<IAction> action;
 
   // Ejecutar comando
-  if ( args.command == "add-entry" )
+  if ( args.command == "add-client" )
+  {
+    if ( args.client_name.empty() || args.account_number == 0 )
+    {
+      std::cerr << "Error: Missing parameters for add-client\n";
+      return 1;
+    }
+
+    auto client = smallbanc::model::Client{
+      args.account_number, args.client_name, "", true };
+    auto writer = std::make_shared<smallbanc::client::ClientWriter>( "clients.sb" );
+
+    action = std::make_unique<AddClientAction>( client, writer );
+  }
+  /*
+  else if ( args.command == "add-entry" )
   {
     if ( args.account_from == 0 || args.account_to == 0 || args.amount == 0.0 ||
          args.description.empty() || args.type.empty() )
@@ -89,23 +107,14 @@ int main( int argc, char *argv[] )
                 << ", Description: " << entry.get_description() << "\n";
     }
   }
-  else if ( args.command == "add-client" )
-  {
-    if ( args.client_name.empty() || args.account_number == 0 )
-    {
-      std::cerr << "Error: Missing parameters for add-client\n";
-      return 1;
-    }
-
-    // TODO: Implement add client logic
-    std::cout << "Client " << args.client_name << " added with account " << args.account_number << "\n";
-  }
   else
   {
     std::cerr << "Unknown command: " << args.command << "\n";
     parser.print_help();
     return 1;
   }
+  */
+  action->execute();
 
   return 0;
 };

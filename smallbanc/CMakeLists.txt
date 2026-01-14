@@ -1,4 +1,4 @@
 set(SOURCES actions.cpp argparse.cpp client.cpp io.cpp ledger.cpp model.cpp queue.cpp argparse.cpp)
 
 add_library(smallbanc ${SOURCES})
-target_include_directories(smallbanc PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_include_directories(smallbanc PUBLIC ${CMAKE_SOURCE_DIR})

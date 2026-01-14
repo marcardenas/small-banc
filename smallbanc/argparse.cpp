@@ -1,7 +1,9 @@
+
+#include "smallbanc/argparse.hpp"
+
 #include <functional>
-#include <smallbanc/argparse.hpp>
-#include <string>
 #include <iostream>
+#include <string>
 
 namespace smallbanc::argparse
 {
@@ -61,6 +63,10 @@ void Parser::parse()
     {
       args_.get().client_name = std::string( argv_[++i] );
     }
+    else if ( argument == "--account-number" && i + 1 < argc_ )
+    {
+      args_.get().account_number = std::stoul( argv_[++i] );
+    }
     else if ( argument[0] != '-' && args_.get().command.empty() )
     {
       // First non flag is the command
@@ -81,7 +87,7 @@ void Parser::set_args( int argc, char **argv )
   argv_ = argv;
 }
 
-void Parser::print_help( const std::string& command )
+void Parser::print_help( const std::string &command )
 {
   if ( command == "add-entry" )
   {

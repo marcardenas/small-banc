@@ -107,7 +107,7 @@ bool LedgerReader::exists() const
   return std::filesystem::exists( m_reader->filename() );
 }
 
-void LedgerWriter::write( const Ledger &ledger ) const
+void LedgerWriter::write( const Ledger& ledger ) const
 {
   std::string content;
   const auto &entries = ledger.entries();

@@ -55,6 +55,18 @@ struct Account
   std::vector<Transaction> transactions;
 };
 
+// ----------------------------------------------------------------------------
+
+class IModelWriter
+{
+public:
+  virtual ~IModelWriter() = default;
+  virtual void write() const = 0;
+  virtual void initialize() const = 0;
+};
+
+// ----------------------------------------------------------------------------
+
 class Entry
 {
 public:

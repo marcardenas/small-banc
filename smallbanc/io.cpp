@@ -17,7 +17,7 @@ std::string FileReader::read() const { return ""; }
 
 void FileWriter::write( const std::string &content ) const
 {
-  std::ofstream ofs( m_file, std::ios::out | std::ios::trunc );
+  std::ofstream ofs( m_file, std::ios::app );
   if ( ofs.is_open() )
   {
     ofs << content;

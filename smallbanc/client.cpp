@@ -25,6 +25,13 @@ std::vector<smallbanc::model::Client> ClientReader::read() const
 
 // ----------------------------------------------------------------------------
 
+ClientWriter::~ClientWriter()
+{
+
+}
+
+// ----------------------------------------------------------------------------
+
 void ClientWriter::insert( const smallbanc::model::Client &client )
 {
   m_dispatch_list.push_back( client );
